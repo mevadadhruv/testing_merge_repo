@@ -1,0 +1,34 @@
+name: Build Java Project
+
+on:
+  push:
+    branches: [ master, '*.*' ]
+    paths-ignore:
+      - '.github/**'
+      - '.idea/**'
+      - '.run/**'
+  pull_request:
+    branches: [ master, '*.*' ]
+    paths-ignore:
+      - '.github/**'
+      - '.idea/**'
+      - '.run/**'
+
+env:
+  SPARK_LOCAL_IP: 127.0.0.1
+
+jobs:
+  build-java-project:
+    name: Build Java Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn -B --no-transfer-progress package --file pom.xml -Dsurefire.skipAfterFailureCount=1
